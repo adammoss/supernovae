@@ -79,7 +79,7 @@ def to_categorical(y, nb_classes=None):
 		Y[i, y[i]] = 1.
 	return Y
 
-def load_data(path="data/unblind_nohostz", classifier=sn1a_classifier, test_fraction=0.2, nb_augment=1, seed=None):
+def load_data(path="data/unblind_nohostz", classifier=sn1a_classifier, test_fraction=0.2, nb_augment=1, seed=None, detection="All"):
 	'''
 	Loads data from the files produced by preprocess.py. Returns the data as numpy arrays which can be used in the
         model.
@@ -90,6 +90,7 @@ def load_data(path="data/unblind_nohostz", classifier=sn1a_classifier, test_frac
           1-test_fraction is the fraction of the data used to train the network
         * nb_augment is the number of random augmentations of data to use
 	* seed is an integer required to prevent different random values
+	* detection is a string to choose whether to use only light curve values upto detection tag. Should be set to "Test" or "Both" to take only the inital values ("All" is default)
 	* nb_samples is the number of different supernovae
 	* sequence_length is the length of the sequences in each supernova event (all equal using pad_sequence())
 	* output_dim is the number of elements in the results (12 with no host and 13 with host)
@@ -140,6 +141,9 @@ def load_data(path="data/unblind_nohostz", classifier=sn1a_classifier, test_frac
 	data = []
 	training_idx = []
 	test_idx = []
+	first_ids = []
+	first_idx = []
+	detection_idx = []
 	idx = 0
 
 	ids_train_permute = []
@@ -157,11 +161,21 @@ def load_data(path="data/unblind_nohostz", classifier=sn1a_classifier, test_frac
 			for row in reader:
 				id = int(row[0])
 				if id != last_id:
+					if id not in first_ids:
+						first_ids.append(id)
+						if detection == 'Both':
+							first_idx.append(idx)	
+							detection_idx.append(int(row[1]))
+						if detection == 'Test':
+							if id in ids_test:
+								first_idx.append(idx)	
+								detection_idx.append(int(row[1]))
 					if not first_time:
 						data.append(data_sequence)
 						if id in ids_train:
 							training_idx.append(idx)
 							ids_train_permute.append(last_id)
+								
 						else:
 							test_idx.append(idx)
 							ids_test_permute.append(last_id)
@@ -171,8 +185,12 @@ def load_data(path="data/unblind_nohostz", classifier=sn1a_classifier, test_frac
 					first_time = False
 				last_id = id
 				last_label = classifier[row[-1]]
-				inputs = [float(v) for i, v in enumerate(row[1:-2])]			
+				inputs = [float(v) for i, v in enumerate(row[2:-2])]			
 				data_sequence.append(inputs)
+
+	for i in xrange(len(first_idx)):
+		for j in xrange(detection_idx[i],len(data[first_idx[i]])):
+			data[first_idx[i]][j] = [-1. for k in xrange(len(data[first_idx[i]][j]))]
 
 	data_copy = list(data)
 	data = pad_sequences(data, dtype='float')
@@ -204,5 +222,5 @@ def load_data(path="data/unblind_nohostz", classifier=sn1a_classifier, test_frac
 
 	ids_train = np.array(ids_train_permute)
 	ids_test = np.array(ids_test_permute)
-	
+
 	return (X_train, X_train_reverse, Y_train, ids_train), (X_test, X_test_reverse, Y_test, ids_test), (length_train, length_test, sequence_len, output_dim, nb_classes)

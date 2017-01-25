@@ -35,8 +35,8 @@ def analyse(filename):
 		print('classifier: ', m)
 
 		with open("arch/"+filename+"_"+m+".tex", "w") as f:
-			f.write("\\begin{tabular}{|" + " | ".join(["c"] * 9) + "|} \hline \n")
-			f.write(" & ".join(['AUC', 'Accuracy', 'F1', 'z', 'Class', 'h', 'B']) + " \\\\ \hline \n")
+			f.write("\\begin{tabular}{|" + " | ".join(["c"] * 10) + "|} \hline \n")
+			f.write(" & ".join(['AUC', 'Accuracy', 'F1', 'z', 'Class', 'h', 'B', 'Dropout', 'Detection']) + " \\\\ \hline \n")
 			for row in sorted_results:
 				p = row[2]
 				acc_mean = np.mean(p['acc'])
@@ -51,6 +51,10 @@ def analyse(filename):
 				prec_std = [ "$ {:.3f}".format(np.std(prec[:,i])) for i in range(0,prec.shape[1])]
 				rec_mean = [ "$ {:.3f}".format(np.mean(rec[:,i])) for i in range(0,prec.shape[1])]
 				rec_std = [ "$ {:.3f}".format(np.std(rec[:,i])) for i in range(0,prec.shape[1])]
+				#prec_mean = [ "$ {:.3f}".format(np.mean(prec[:,i])) for i in range(0,prec.shape[1])]
+				#prec_std = [ "$ {:.3f}".format(np.std(prec[:,i])) for i in range(0,prec.shape[1])]
+				#rec_mean = [ "$ {:.3f}".format(np.mean(rec[:,i])) for i in range(0,prec.shape[1])]
+				#rec_std = [ "$ {:.3f}".format(np.std(rec[:,i])) for i in range(0,prec.shape[1])]
 				auc = "$ {:.3f}".format(auc_mean) + ' \pm ' + "{:.3f} $".format(auc_std)
 				acc = "$ {:.3f}".format(acc_mean) + ' \pm ' + "{:.3f} $".format(acc_std)
 				f1 = "$ {:.2f}".format(f1_mean) + ' \pm ' + "{:.2f} $".format(f1_std)
@@ -62,8 +66,8 @@ def analyse(filename):
 					host = 'F'
 				else:
 					host = 'T'
-				f.write(" & ".join([row[3], auc, acc, f1, host, p['rnn'], str(p['layers']), bi, str(p['dropout'])]) + " \\\\\n")
-				print(" & ".join([row[3], auc, acc, f1, host, p['rnn'], str(p['layers']), bi, str(p['dropout'])] + prec_mean + rec_mean))
+				f.write(" & ".join([row[3], auc, acc, f1, host, p['rnn'], str(p['layers']), bi, str(p['dropout']), p['detection']]) + " \\\\\n")
+				print(" & ".join([row[3], auc, acc, f1, host, p['rnn'], str(p['layers']), bi, str(p['dropout']), p['detection']] + prec_mean + rec_mean))
 			f.write("\\end{tabular}")
 
 def test_arch(p):
@@ -83,7 +87,7 @@ def test_arch(p):
 	for i in range(0,nb_rand):
 		result = train(batch_size=p['batch_size'], dropout=p['dropout'], nb_hidden=p['layers'], path=p['data'][0], test_fraction=p['test_fraction'], 
 			classifier=p['classifier'][0], nb_epoch=p['nb_epoch'], bidirectional=p['bidirectional'], rnn_type=p['rnn'], save_model=p['save_model'], 
-			plot_loss=p['plot_loss'], filename=root_filename+'_'+filename, plot_data=plot_data, optimizer=p['optimizer'], nb_augment=p['nb_augment'])
+			plot_loss=p['plot_loss'], filename=root_filename+'_'+filename, plot_data=plot_data, optimizer=p['optimizer'], nb_augment=p['nb_augment'], detection=p['detection'])
 		acc.append(result[0])
 		auc.append(result[1])
 		prec.append(result[2].tolist())
@@ -123,7 +127,7 @@ if __name__ == '__main__':
 	if args.np:
 		nb_proc = args.np
 	else:
-		nb_proc = 1
+		nb_proc = 4
 
 	if args.nr:
 		nb_rand = args.nr
@@ -160,9 +164,9 @@ if __name__ == '__main__':
 	p['rnn'] = ['LSTM']
 	p['layers'] = [[4], [16, 16]]
 	p['data'] = [["data/unblind_nohostz", 'No Host'], ["data/unblind_hostz", 'Host']]
-	p['bidirectional'] = [False, True]
+	p['bidirectional'] = [True]
 	p['dropout'] = [0.5] 
-	p['classifier'] = [[sn1a_classifier, 'SN1a'], [type_classifier, '123']]
+	p['classifier'] = [[type_classifier, '123']]
 	p['test_fraction'] = [0.5, 0.948]
 	p['batch_size'] = [batch_size]
 	p['nb_epoch'] = [nb_epoch]
@@ -170,6 +174,7 @@ if __name__ == '__main__':
 	p['save_model'] = [save_model]
 	p['optimizer'] = [optimizer]
 	p['nb_augment'] = [nb_augment]
+	p['detection'] = ['Test']
 
 	varNames = sorted(p)
 	combinations = [dict(zip(varNames, prod)) for prod in it.product(*(p[varName] for varName in varNames))]

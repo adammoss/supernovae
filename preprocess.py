@@ -141,6 +141,7 @@ def parser_last(filename):
 	* filename is a string containing the path to the supernovae light curve data
 	* survey is a string containing the survey name
 	* snid is an integer containing the supernova ID
+	* detection_index is an integer containing the last sequence index for challenge 2
 	* ra is a float containing the RA of the supernova
 	* dec is a float containing the Dec of the supernova
 	* mwebv is a float describing the dust extinction
@@ -152,7 +153,7 @@ def parser_last(filename):
 	* obs is a sequence of arrays each element containing [time since first observation,fluxes in each colourband,flux errors in each colourband]
 	- Used in __main__() to read in the data
 	'''
-	survey = snid = ra = dec = mwebv = hostid = hostz = spec = sim_type = sim_z = None
+	survey = snid = detection = ra = dec = mwebv = hostid = hostz = spec = sim_type = sim_z = None
 	obs = []
 	g = r = i = z = 0
 	g_error = r_error = i_error = z_error = 0
@@ -183,6 +184,8 @@ def parser_last(filename):
 					sim_type = s[1].split('SN Type =')[1].split(',')[0].strip()
 				elif s[0] == 'SIM_REDSHIFT':
 					sim_z = float(s[1])
+				elif s[0] == 'DETECTION':
+					detection_index = len(obs)
 				elif s[0] == 'OBS':
 					o = s[1].split() 
 					if first_obs is None:
@@ -200,7 +203,7 @@ def parser_last(filename):
 						z = float(o[3])/flux_norm
 						z_error = float(o[4])/flux_norm
 					obs.append([(float(o[0]) - first_obs)/time_norm] + [g,r,i,z] + [g_error,r_error,i_error,z_error])
-	return survey, snid, sn_type, sim_type, sim_z, ra, decl, mwebv, hostid, hostz, spec, obs
+	return survey, snid, detection_index, sn_type, sim_type, sim_z, ra, decl, mwebv, hostid, hostz, spec, obs
 
 def parser_spline(filename):
 	'''
@@ -209,6 +212,7 @@ def parser_spline(filename):
 	* filename is a string containing the path to the supernovae light curve data
 	* survey is a string containing the survey name
 	* snid is an integer containing the supernova ID
+	* detection_index is an integer containing the last sequence index for challenge 2
 	* ra is a float containing the RA of the supernova
 	* dec is a float containing the Dec of the supernova
 	* mwebv is a float describing the dust extinction
@@ -220,7 +224,7 @@ def parser_spline(filename):
 	* obs is a sequence of arrays each element containing [time since first observation,fluxes in each colourband,flux errors in each colourband]
 	- Used in __main__() to read in the data
 	'''
-	survey = snid = ra = dec = mwebv = hostid = hostz = spec = sim_type = sim_z = None
+	survey = snid = detection = ra = dec = mwebv = hostid = hostz = spec = sim_type = sim_z = None
 	obs = []
 	t = []
         t_arr = []
@@ -255,6 +259,8 @@ def parser_spline(filename):
 					sim_type = s[1].split('SN Type =')[1].split(',')[0].strip()
 				elif s[0] == 'SIM_REDSHIFT':
 					sim_z = float(s[1])
+				elif s[0] == 'DETECTION':
+					detection = len(obs)
 				elif s[0] == 'OBS':
 					o = s[1].split()
 					if first_obs is None:
@@ -281,8 +287,12 @@ def parser_spline(filename):
 	i_spline = spline(i_arr,t_arr)
 	z_spline = spline(z_arr,t_arr)
 	t,ind,frac = time_collector(t_arr)	
+	if detection != None:
+		detection_index = len([i for i in t if i <= obs[detection][0]])
+	else:
+		detection_index = len(t)
 	obs = [[t[i],g_spline(t[i]).tolist(),r_spline(t[i]).tolist(),i_spline(t[i]).tolist(),z_spline(t[i]).tolist(),g_arr[2][index_min(abs(g_arr[0]-t[i]))],r_arr[2][index_min(abs(r_arr[0]-t[i]))],i_arr[2][index_min(abs(i_arr[0]-t[i]))],z_arr[2][index_min(abs(z_arr[0]-t[i]))]] for i in xrange(len(t))]
-	return survey, snid, sn_type, sim_type, sim_z, ra, decl, mwebv, hostid, hostz, spec, obs
+	return survey, snid, detection_index, sn_type, sim_type, sim_z, ra, decl, mwebv, hostid, hostz, spec, obs
 
 def parser_augment(filename):
 	'''
@@ -292,6 +302,7 @@ def parser_augment(filename):
 	* filename is a string containing the path to the supernovae light curve data
 	* survey is a string containing the survey name
 	* snid is an integer containing the supernova ID
+	* detection_index is an integer containing the last sequence index for challenge 2
 	* ra is a float containing the RA of the supernova
 	* dec is a float containing the Dec of the supernova
 	* mwebv is a float describing the dust extinction
@@ -303,7 +314,7 @@ def parser_augment(filename):
 	* obs is a sequence of arrays each element containing [time since first observation,fluxes in each colourband,flux errors in each colourband]
 	- Used in __main__() to read in the data
 	'''
-	survey = snid = ra = dec = mwebv = hostid = hostz = spec = sim_type = sim_z = None
+	survey = snid = detection = ra = dec = mwebv = hostid = hostz = spec = sim_type = sim_z = None
 	obs = []
 	with open(filename, 'rU') as f:
 		first_obs = None
@@ -334,6 +345,8 @@ def parser_augment(filename):
 					sim_type = s[1].split('SN Type =')[1].split(',')[0].strip()
 				elif s[0] == 'SIM_REDSHIFT':
 					sim_z = float(s[1])
+				elif s[0] == 'DETECTION':
+					detection = len(obs)
 				elif s[0] == 'OBS':
 					o = s[1].split() 
 					if first_obs is None:
@@ -362,9 +375,12 @@ def parser_augment(filename):
 	z_err_arr = [obs[i][8] for i in xrange(len(obs))]
 	correctplacement = True
 	frac = grouping
-	j = 0
 	while correctplacement:
 		t,index,frac = time_collector(t_arr,frac) 
+		if detection != None:
+			detection_index = len([i for i in t if i <= obs[detection][0]])
+		else:
+			detection_index = len(t)
 		g_temp_arr = []
 		g_err_temp_arr = []
 		r_temp_arr = []
@@ -384,13 +400,13 @@ def parser_augment(filename):
 			correctplacement = False
 		else:
 			frac += 0.1
-	
+
 	g_temp_arr,g_err_temp_arr = fill_in_points(g_temp_arr,g_err_temp_arr)
 	r_temp_arr,r_err_temp_arr = fill_in_points(r_temp_arr,r_err_temp_arr)
 	i_temp_arr,i_err_temp_arr = fill_in_points(i_temp_arr,i_err_temp_arr)
 	z_temp_arr,z_err_temp_arr = fill_in_points(z_temp_arr,z_err_temp_arr)
 	obs = [[t[i],g_temp_arr[i],r_temp_arr[i],i_temp_arr[i],z_temp_arr[i],g_err_temp_arr[i],r_err_temp_arr[i],i_err_temp_arr[i],z_err_temp_arr[i]] for i in xrange(len(t))]
-	return survey, snid, sn_type, sim_type, sim_z, ra, decl, mwebv, hostid, hostz, spec, obs
+	return survey, snid, detection_index, sn_type, sim_type, sim_z, ra, decl, mwebv, hostid, hostz, spec, obs
 
 if __name__ == '__main__':
 	'''
@@ -448,14 +464,14 @@ if __name__ == '__main__':
 
 		for f in glob.glob('data/SIMGEN_PUBLIC_DES/DES_*.DAT'):	
 		
-			survey, snid, sn_type, sim_type, sim_z, ra, decl, mwebv, hostid, hostz, spec, obs = parser(f)
+			survey, snid, detection_index, sn_type, sim_type, sim_z, ra, decl, mwebv, hostid, hostz, spec, obs = parser(f)
 			try:
 				unblind = [sim_z, key_types[sim_type]]
 			except:
 				print 'No information for', snid
 			for o in obs:
-				whost.writerow([snid,o[0],ra,decl,mwebv,hostz[0]] + o[1:9] + unblind)
-				wnohost.writerow([snid,o[0],ra,decl,mwebv] + o[1:9] + unblind)
+				whost.writerow([snid,detection_index,o[0],ra,decl,mwebv,hostz[0]] + o[1:9] + unblind)
+				wnohost.writerow([snid,detection_index,o[0],ra,decl,mwebv] + o[1:9] + unblind)
 			try:
 				sn_types[unblind[1]] += 1
 			except:

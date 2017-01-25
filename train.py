@@ -99,7 +99,7 @@ def build_model(nb_hidden, nb_classes, dropout, sequence_len, output_dim, bidire
 
 def train(batch_size=10, dropout=0.5, nb_hidden=[16, 16], path="data/unblind_nohostz", test_fraction=0.5, classifier=sn1a_classifier, nb_epoch=200, nb_augment=5, 
 	bidirectional=False, rnn_type='LSTM',feedback=1, optimizer='adam', activation='tanh', save_model=False, plot_loss=False, plot_data=[], 
-        filename='current', consensus=True):
+        filename='current', consensus=True, detection='All'):
 	'''
 	Main training module. The data is read and the neural network built and the data fed into the neural network.
 	The analysis metrics are also calculated here.
@@ -126,6 +126,8 @@ def train(batch_size=10, dropout=0.5, nb_hidden=[16, 16], path="data/unblind_noh
 	  is appended if more than one random augmentation is used
 	* filename is a string containing the save name for plots and model properties 
 	* consensus is a boolean which when true mean pools the predictions from each step
+	* detection is a string to choose whether to use only light curve values upto detection tag. Should be set to "Test"
+          or "Both" to take only the inital values ("All" is default)
 	* acc is a float containing the final accuracy
 	* auc is a float containing the final area under the Receiver Operating Characteristic curve
 	* prec is the final precision
@@ -183,7 +185,7 @@ def train(batch_size=10, dropout=0.5, nb_hidden=[16, 16], path="data/unblind_noh
 				self.plot_data[len(self.plot_data)-1] = [self.loss, self.val_loss, self.acc, self.val_acc]
 				loss_plotter(self.plot_data, self.filename)
 
-	(X_train, X_train_reverse, Y_train, ids_train), (X_test, X_test_reverse, Y_test, ids_test), (length_train, length_test, sequence_len, output_dim, nb_classes) = load_data(path=path, test_fraction=test_fraction, classifier=classifier, nb_augment=nb_augment)
+	(X_train, X_train_reverse, Y_train, ids_train), (X_test, X_test_reverse, Y_test, ids_test), (length_train, length_test, sequence_len, output_dim, nb_classes) = load_data(path=path, test_fraction=test_fraction, classifier=classifier, nb_augment=nb_augment, detection=detection)
 
 	model_root = 'save/' + filename
 	

@@ -1,0 +1,52 @@
+To whom it may concern,
+
+We kindly thank the referee for their comments on "Deep recurrent neural networks for supernovae classification". We have addressed each of the points made and feel that this has improved the paper. Laid out below are each of the comments followed by a description of the edits we have added to the paper.
+
+(1) The authors claim that their results are comparable to those from the
+challenge itself (several groups had participated in the competition), but they
+do not show the comparison.
+
+We have greatly expanded the table to include a range of our results for differing training sample sizes as well as including the results from Karpenka and Newling. It is very difficult to compare our work directly to the other SPCC results since we use (and depend on using) the post-SPCC data. The comparisons are now mentioned in the results section rather than the conclusions.
+
+(2) The original competition was in two parts. The second part was where the
+competitors were supposed to use only the first n points to attempt the
+classification. Not a single group tried that. I can not require the authors to
+attempt that, leave alone succeed. That is a hard problem. But given the new
+architectures, that test may be within reach and it will be useful to perhaps
+see a discussion. Thats just a suggestion.
+
+We have edited our code to attempt this challenge. We did much better than we expected considering the difficulty of the problem. The network learns really well about the limited initial light-curve data, much better than if we feed only the inital part of the light-curve into a network trained on full light-curves. This is because, when training on the full light-curves the weights are influenced by the later parts of the sequence. This is not true when only using the initial part of the light-curve so the network can learn much better about what happens at the start of the light-curve without worrying about the later part of the data. We have added the results to the last section of the table and mentioned the results in the text.
+
+(3) The authors say that their model could be used with real-data. There are a
+very large number of light-curves from many different sky-surveys out there
+(though not many in multiple filters). Actually using some of those and
+showing that the method actually works will go a long way in convincing anyone.
+
+This is quite a large amount of work which we are currently working on for a future publication. We have mentioned this in the conclusions
+
+(4) Light-curves are used in the input layer. Given that most light-curves have
+irregularly spaced points (as well as being heteroskedastic) it will be useful to see
+a discussion about if that needs to be taken into consideration for the
+construction of the network. For example would it matter if the observations
+are bunched up versus well-separated. In general, a better and more detailed 
+description of the working.
+
+The points of the light-curves are irregularly spaced. Since this the only available form the data can take we cannot improve on the spacing of the points. Due to the black box nature of recurrent neural networks we cannot be certain whether position in sequence has as great an effect as the value of the time in the sequence, i.e. is the i^th entry of the sequence important or is it the time in that entry. As each sequence needs to be the same length but different light-curves have different sequence lengths shorter sequences are padded and then masked. This could be done, padding all the light-curves to the same sequence length, but then reorganised to put all the similar times at similar sequence entries. We have tested this and found that it is slightly worse with the reorganisation technique. We judge from this that the optimal way  to train the network is to use the light-curves directly and let the network learn about the clustering of points from the values of the times. We can't know for sure, but the network may even learn that there are hidden connections between the clustering of observation times and supernovae type. We have added a paragraph noting this in the text.
+
+(5) Over-fitting, as the authors are aware, can indeed be an issue. It will be
+extremely useful if they can isolate the features as seen by the network on
+which it discriminates between different types. References to deconvnets 
+(used for convnets, not RNNs e.g. arxiv 133.2901) may reveal pieces of code 
+that could allow the authors to do so (after some adaption).
+
+It is not easy to demonstrate how to visualise recurrent neural networks (there are few good papers on the topic, mostly on using it in language https://arxiv.org/abs/1506.02078) but these require whole papers devoted to the visualisation. The reason they can't be easily visualised is that the outputs of hidden layers are abstract entities which cannot be mapped back to features of the light-curve. This is different from convolutional neural networks where each output from the hidden convolutional layers are extractions of features from the larger image and is therefore directly related to the original image content.
+
+Finally a few more references to RNNs in the introduction will be useful for
+the readers.
+
+We have added a reference to Medsker and Jain's book on recurrent neural networks which is very comprehensive and contains all the information needed to understand RNNs.
+
+Do the authors plan to release the model along with the settled weights?
+
+The code is public so people can train as they wish. We think this is probably more useful to people than having the model and the saved weights.
+

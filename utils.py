@@ -44,11 +44,13 @@ def loss_plotter(history, filename, plot_legend=True):
 			ax1.semilogy(history[i][1],color='blue')
 			ax2.semilogy(1 - np.array(history[i][2]),color='green')
 			ax2.semilogy(1 - np.array(history[i][3]),color='blue')
+
 		else:
 			a, = ax1.semilogy(history[i][0],color='green')
 			b, = ax1.semilogy(history[i][1],color='blue')
 			c, = ax2.semilogy(1 - np.array(history[i][2]),color='green')
 			d, = ax2.semilogy(1 - np.array(history[i][3]),color='blue')
+
 
 	if plot_legend:
 		ax1.legend([a,b],['Train','Test'],loc='best')
