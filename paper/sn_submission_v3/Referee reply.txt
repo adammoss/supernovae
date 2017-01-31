@@ -3,7 +3,7 @@ first few points is powerful and will be welcomed by many. If using the entire
 light-curve during testing provides somewhat worse results, then perhaps there
 is a way to improve the model even further.
 
-There is possibly a way to improve the model further, but this is not certain. One of our quarms about trying to improve the model further is that the way RNNs work mean that including the information from after the early epoch challenge skews the overall weights of the network meaning that the early epoch weights are less well known compared to training using only the early epoch challenge data.
+There is possibly ways to improve the model further, but this is not certain. One reason that improving the model further may not actually help is that, due to the way RNNs work, including the information from after the early epoch challenge skews the overall weights of the network meaning that the early epoch weights are less well known compared to training using only the early epoch challenge data. Since this is mentioned in the text we have not expanded further.
 
 (2) Many machine learning methods seem like black-boxes and keeping them that way
 does not help dispel myths about them from the eyes of the uninitiated. When
@@ -13,30 +13,32 @@ light-curves, the number of chunks they are typically divided in (a box-plot
 could be used to describe median, show outliers etc.) Or point to some
 specifics from the SPCC figures (table X, Fig Y etc.)
 
+We have added (new) Fig.2 which contains three subplots. The lower left subplot is simply the total number of days of observation of the light-curve vs. the number of grouped-time data vector elements these are split into. This shows that when there are more days of observation the light-curve data is grouped into longer data vectors. The upper subplot shows the distribution of the total number of days of observation of the light-curve with min, max, mean and median values indicated and the lower right subplot shows the distribution of the number of elements in the grouped-time data vector. We have added this information to the text.
+
 (3) *ANY* discussion about error-bars will be helpful in letting readers decide if
 they would want to apply the technique. [See comment below about 73+/-2%]. But
 thats just a suggestion and not a requirement.
 
-The errors in the results are due to running the training 5 times with different random selections of training data (and random augmentations of data). This is mentioned in the results section already.
+The errors in the results are due to training 5 times with different random selections of training data (and random augmentations of data). This is mentioned in the results section already, but we have expanded on it in the same paragraph.
 
 (4) Did the authors try removing known points, then apply their chunking and random
 filling and see if they get consistent results?
 
-To do...
+We ran the training removing 10% of the known points from each filter before grouping the times and randomly augmenting. The equivalent of the top line in the table with 10% of the points removed gives results very close to the results in the second line of the table, i.e. there is a slight degredation but this is to be expected, and the results are possibly better than we expected when performing this proceduce. We have added this to the results section.
 
 (5) The discussion about padding is unclear. if, in the end, the padding does not
 get used, may be the discussion should be removed to an appendix or a footnote
 (but do not remove it as it is part of the flow). Perhaps an example will help?
 
-The padding is used to create the vectors of the correct length. This padding is then ignored by the network using a technique called masking. This means the padding has no effect on the results, it just maintains the correct length vectors. This is already explicitly described in the text.
+The padding is used to create the vectors of the correct length. This padding is then ignored by the network using a technique called masking. This means the padding has no effect on the results, it just maintains the correct length vectors. This is already explicitly described in the text. We feel this short description helps with the understanding of the process of training the network, but does not need expanding.
 
 (6a) In Table 2 please include the 0.052% even if the results are bad. 
 
-They are already in the table in every case - this a train fraction of 0.052, not 0.052%.
+They are already in the table in every case - 1,045 is equivalent to a train fraction of 0.052 (not 0.052%).
 
 (6b) Are the early-epoch results for SN1a or 123? Can the results be provided for both sets?
 
-The early-epoch challenge is for SN1a only and not 123. We have given that a go and added the results to the table.
+The early-epoch challenge is for SN1a only and not 123. We have given 123 a go and added the results to the table. The difference between 123 categorisation using the full light-curve and the early-epoch data is very similar to the difference between the SN1a full light-curve and early-epoch data. The results are not as good, but still surprisingly high considering the length of the vectors.
 
 (6c) In the middle section, in the last 2 lines, Completeness seems to rise when Host
 information is dropped. Thats anomalous. If you understand why, a comment will
@@ -44,7 +46,7 @@ be useful. Otherwise those are the kind of error-bars that become meaningful:
 are both 73+/-2%? You can still fit the table on a single page by abbreviating
 contents in the first column.
 
-This was a statistical fluctuation. We have added the errors on the purity and completeness. As it can be seen the errors on both of the bottom lines of the second section are ~4%, approximately the same as the difference between the means.
+This was a statistical fluctuation. We have added the errors on the purity and completeness. As it can be seen the errors on both of the bottom lines of the second section are ~4%, approximately the same as the difference between the means. The same is true for the 123 categorisation in the early-epoch challenge where the completeness without host-z is higher than with host-z, but the error on the completeness is also very large.
 
 (7) It is understandable that your methods are not comparable with various methods
 used during SPCC, but perhaps its still worth mentioning the best numbers
@@ -55,7 +57,7 @@ To do...
 (8) The early-epoch result is surprising. May be it should be emphasized more? It
 will be useful to many people.
 
-To do..
+We have highlighted the result in the abstract as well as separated the paragraph in the conclusion section. The main point of the paper is to describe the network architecture and it's use in classification, rather than achieve the best results possible. It is somewhat fortunate that we did as well as we did on the early-epoch challenge, but we don't want to make that the main focus of the paper.
 
 (9) The following is a loose sentence: "Moreover, we have ...trained on the whole
 light-curve". Especially so since you do not normalize time to the peak value so the
@@ -70,12 +72,12 @@ even discussed the effects of different filters etc. What happens if you use
 just one or two filters, for instance? So, either go into more details, or
 exclude pure speculation.
 
-This isn't pure speculation, this is a consideration for further work. It is possible to data mine images and pipe this into an RNN. We could do this for a single filter, we could do this for many filters. If one filter was missing then the input could be augmented as done here and the other raw images convolved to extract features. This is identical to what is done here, but with a huge amount more information.
+This isn't pure speculation, this is a consideration for further work. It is possible to data mine images and pipe this into an RNN. We could do this for a single filter or we could do this for many filters. If one filter was missing then the input could be augmented as done here and the other raw images convolved to extract features. The principal is identical to what is done here, but with a huge amount more information. We have not changed the text here as it is an interesting prospect which others (as well as ourselves) might like to consider.
 
 (11) Section 4: Over-fitting can also show up as some inputs being learnt too well
 (and thus its not the noise that gets fitted)
 
-What is different between differences in inputs and noise? They are the same as far as we can tell
+We have changed this to describe that over-fitting occurs when a network learns about relations between the inputs and outputs in the training data which aren't present in the test data.
 
 (12) You mention in the comments that the code is public. Please refer to it so that
 it can be used by others.
@@ -85,13 +87,13 @@ This is already mentioned, the link is on the front page.
 (13) Shorten the y-axes in figure 3 (keeping it same for both parts) to reduce
 unused white-space.
 
-Done.
+We have changed the scale to show between 3e-2 and 4e-1 therefore reducing the unused white-space.
 
 minor comments:
 (1) references need to be delineated better - many seem to be inline now and don't feel right.
 
-We are not sure how it's supposed to feel?
+We are not sure what the problem is here.
 
 (2) inputted -> input
 
-We have changed this
+We have changed this.
