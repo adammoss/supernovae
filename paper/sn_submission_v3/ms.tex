@@ -132,15 +132,15 @@ The output from the final set of hidden layers in each direction is merged at ea
 \begin{equation}
 L= -\sum_{i,j} t_{i,j} \log \left( p_{i,j} \right)
 \end{equation}
-where $i,j$ run over the class labels, $t_{i,j}$ are the targets for each class (either 0 or 1) and $p_{i,j}$ are the predicted probabilities. Back-propogation takes the derivative of the loss with respect to the weights $W$ of the output layer, $\partial L/\partial W$, and uses the chain rule to update the weights in the network.
+where $i,j$ run over the class labels, $t_{i,j}$ are the targets for each class (either 0 or 1) and $p_{i,j}$ are the predicted probabilities. Back-propagation takes the derivative of the loss with respect to the weights $W$ of the output layer, $\partial L/\partial W$, and uses the chain rule to update the weights in the network.
 
 \section{Example Data}
 
-In this paper we will consider data from the Supernovae Photometric Classification Challenge (SPCC)~\cite{Kessler:2010wk,Kessler:2010qj}, consisting of 21319 simulated supernove light curves.  Each supernovae sample consists of a time series of flux measurements, with errors, in the $g,r,i,z$ bands (one band for each timestep), along with the position on the sky and dust extinction. An example set of light curves is shown in Fig.~\ref{fig:lightcurve}. 
+In this paper we will consider data from the Supernovae Photometric Classification Challenge (SPCC)~\cite{Kessler:2010wk,Kessler:2010qj}, consisting of 21319 simulated supernova light curves.  Each supernovae sample consists of a time series of flux measurements, with errors, in the $g,r,i,z$ bands (one band for each timestep), along with the position on the sky and dust extinction. An example set of light curves is shown in Fig.~\ref{fig:lightcurve}. 
 
 Due to the format of the input data, we first do a small amount of data processing to obtain values of the $g,r,i,z$ fluxes and errors at each sequential step.  We assume the time sequence begins at day 0 for each supernovae, rather than counting days forwards and backwards from the maxima of the light curve. For observations less than $\sim1$ hour apart, we group the $g,r,i,z$ values into a single vector, ensuring there is at most one filter-type in each group. If there is more than one filter-type, we further subdivide the group using a finer time interval.  The group time is the mean of the times of each observation, which is reasonable as the time intervals are small compared to the characteristic time of the light curve. 
 
-In Fig.~\ref{fig:violinplot} we show how the length of the grouped-time data vector is related to the duration of the light-curve. The bottom left subplot shows that more total number of day since the beginning of observation of the light-curve results in a greater number of grouped time elements in the vector. The upper subplot shows the distribution of observation lengths in the SPCC data varies significantly with two distinct peaks. These are grouped into an average of 40-3element data vectors as can be seen in the bottom right subplot.
+In Fig.~\ref{fig:violinplot} we show how the length of the grouped-time data vector is related to the duration of the light-curve. The bottom left subplot shows that more total number of day since the beginning of observation of the light-curve results in a greater number of grouped time elements in the vector. The upper subplot shows the distribution of observation lengths in the SPCC data varies significantly with two distinct peaks. These are grouped into an average of 40-element data vectors as can be seen in the bottom right subplot.
 
 \begin{figure}
 \centering
@@ -281,7 +281,9 @@ For $5.2\%$ of the representative SPCC data, the training dataset is so small th
 
 For a training fraction of  $5.2\%$ we find a single-layer LSTM network, with 4 hidden units, and dropout of 0.5 satisfies this criteria. For 5 randomised runs, training for 200 epochs, we obtain a classification accuracy of $85.9 \pm 0.9$\%, AUC of $0.910 \pm 0.012$ and $F_1 = 0.31 \pm 0.03$. The corresponding type-Ia purity and completeness are $72.4\pm0.4\%$ and $66.1\pm6.0\%$ respectively.
 
-It is difficult to directly compare the results from the SPCC directly with this work, but using post-SPCC data, we obtain results which are competitive with previous approaches. The analyses by~\cite{Karpenka:2012pm} and~\cite{Newling:2010bp} are easier to compare. Along with~\cite{Lochner:2016hbn} these employ a two-step process, where features are first extracted by various methods before machine learning classification. The results obtained for similar sized training sets are comparable as can be seen in the top section of Table~\ref{tab:05_SN1a}. When using half the dataset to train on we get a higher $F_1$ value, $F_1=0.64$ compared to $F_1=0.58$ in~\cite{Karpenka:2012pm}. The value in~\cite{Newling:2010bp} is also similar given that the sample size is smaller. For a smaller sample training set of 5.2\% of all the data we again perform similarly to~\cite{Karpenka:2012pm} but under perform compare to~\cite{Newling:2010bp} taking into account the slightly larger sample size in the latter case.
+It is difficult to directly compare the results from the SPCC challenge in~\cite{Kessler:2010qj} with this work since the figure of merit is quoted as a function of redshift and a non-representative set of light-curves was originally used. In~\cite{Kessler:2010qj} the method of~\cite{2008AJ....135..348S} had the highest average $F_1\sim0.79$, with 76\% purity and the 96\% completeness. This is a, somewhat, confusing average as $F_1\sim 0.4$ at a redshift $z\sim0.1$ up to $F_1\sim1$ at $z\sim0.9$. Other methods performed similarly. 
+
+It is better to consider comparison with other methods using post-SPCC data, for we obtain results which are competitive with previous approaches. The analyses by~\cite{Karpenka:2012pm} and~\cite{Newling:2010bp} are easier to compare. Along with~\cite{Lochner:2016hbn} these employ a two-step process, where features are first extracted by various methods before machine learning classification. The results obtained for similar sized training sets are comparable as can be seen in the top section of Table~\ref{tab:05_SN1a}. When using half the dataset to train on we get a higher $F_1$ value, $F_1=0.64$ compared to $F_1=0.58$ in~\cite{Karpenka:2012pm}. The value in~\cite{Newling:2010bp} is also similar given that the sample size is smaller. For a smaller sample training set of 5.2\% of all the data we again perform similarly to~\cite{Karpenka:2012pm} but under perform compare to~\cite{Newling:2010bp} taking into account the slightly larger sample size in the latter case.
 
 In the second section of Table~\ref{tab:05_SN1a} the three class categorisation is shown. There is no available data for comparison of this problem, but compared to classification between type-Ia vs. non-type-Ia, bidirectional recurrent neural networks do well. The AUC and accuracy remain high, still above 90\% when the host-$z$ is included using a training fraction of 0.5. Using a smaller training fraction of 0.052, the results are worsened similar to the two class categorisation in the top section of Table~\ref{tab:05_SN1a}.
 
@@ -358,6 +360,8 @@ Medsker, L., \& Jain, L.~C. 1999, Recurrent neural networks: design and
 
 \bibitem[{Newling {et~al.}(2011)}]{Newling:2010bp}
 Newling, J., {et~al.} 2011, Mon. Not. Roy. Astron. Soc., 414, 1987
+
+\bibitem[Sako et al.(2008)]{2008AJ....135..348S} Sako, M., Bassett, B., Becker, A., et al.\ 2008, \aj, 135, 348-373
 
 \bibitem[{Srivastava {et~al.}(2014)Srivastava, Hinton, Krizhevsky, Sutskever,
   \& Salakhutdinov}]{JMLR:v15:srivastava14a}

@@ -1,9 +1,11 @@
+We wish to thank the referee for their points and we have done our best to expand on each of them fully.
+
 (1) The work as presented is in almost acceptable form. The part about using just the
 first few points is powerful and will be welcomed by many. If using the entire
 light-curve during testing provides somewhat worse results, then perhaps there
 is a way to improve the model even further.
 
-There is possibly ways to improve the model further, but this is not certain. One reason that improving the model further may not actually help is that, due to the way RNNs work, including the information from after the early epoch challenge skews the overall weights of the network meaning that the early epoch weights are less well known compared to training using only the early epoch challenge data. Since this is mentioned in the text we have not expanded further.
+There could be possibly ways to improve the model further, but this is not a certainty. One reason that improving the model further may not actually help is that, due to the way RNNs work, including the information from after the early epoch challenge skews the overall weights of the network meaning that the early epoch weights are less well known compared to training using only the early epoch challenge data. Since this is mentioned in the text we have not expanded further.
 
 (2) Many machine learning methods seem like black-boxes and keeping them that way
 does not help dispel myths about them from the eyes of the uninitiated. When
@@ -30,7 +32,7 @@ We ran the training removing 10% of the known points from each filter before gro
 get used, may be the discussion should be removed to an appendix or a footnote
 (but do not remove it as it is part of the flow). Perhaps an example will help?
 
-The padding is used to create the vectors of the correct length. This padding is then ignored by the network using a technique called masking. This means the padding has no effect on the results, it just maintains the correct length vectors. This is already explicitly described in the text. We feel this short description helps with the understanding of the process of training the network, but does not need expanding.
+The padding is used to create the vectors of the correct length. This padding is then ignored by the network using a technique called masking. This means the padding has no effect on the results, it just maintains the correct length vectors. This is already described in the text. We feel this short description helps with the understanding of the process of training the network, but does not need expanding.
 
 (6a) In Table 2 please include the 0.052% even if the results are bad. 
 
@@ -38,7 +40,7 @@ They are already in the table in every case - 1,045 is equivalent to a train fra
 
 (6b) Are the early-epoch results for SN1a or 123? Can the results be provided for both sets?
 
-The early-epoch challenge is for SN1a only and not 123. We have given 123 a go and added the results to the table. The difference between 123 categorisation using the full light-curve and the early-epoch data is very similar to the difference between the SN1a full light-curve and early-epoch data. The results are not as good, but still surprisingly high considering the length of the vectors.
+The early-epoch challenge is for SN1a only and not 123. We have given 123 a go and added the results to the table. The difference between 123 categorisation using the full light-curve and the early-epoch data is very similar to the difference between the SN1a full light-curve and early-epoch data. The results are not as good, but still surprisingly high considering the length of the data.
 
 (6c) In the middle section, in the last 2 lines, Completeness seems to rise when Host
 information is dropped. Thats anomalous. If you understand why, a comment will
@@ -52,7 +54,7 @@ This was a statistical fluctuation. We have added the errors on the purity and c
 used during SPCC, but perhaps its still worth mentioning the best numbers
 there?
 
-To do...
+We have added a paragraph stating the numbers of the highest average F_1 method (Sako) from the SPCC results paper. We have also said that they other methods performed similarly but they cannot be compared well to our results.
 
 (8) The early-epoch result is surprising. May be it should be emphasized more? It
 will be useful to many people.
@@ -72,7 +74,7 @@ even discussed the effects of different filters etc. What happens if you use
 just one or two filters, for instance? So, either go into more details, or
 exclude pure speculation.
 
-This isn't pure speculation, this is a consideration for further work. It is possible to data mine images and pipe this into an RNN. We could do this for a single filter or we could do this for many filters. If one filter was missing then the input could be augmented as done here and the other raw images convolved to extract features. The principal is identical to what is done here, but with a huge amount more information. We have not changed the text here as it is an interesting prospect which others (as well as ourselves) might like to consider.
+This isn't pure speculation, this is a consideration for further work. It is possible to data mine images and pipe this into an RNN. We could do this for a single filter or we could do this for many filters. If one filter was missing then the input could be augmented as done here and the other raw images convolved to extract features. The principal is identical to what is done here, but with a huge amount more information. We have not changed the text here as it is an interesting prospect which others (as well as ourselves) might like to consider, but would need considerable work to go into detail.
 
 (11) Section 4: Over-fitting can also show up as some inputs being learnt too well
 (and thus its not the noise that gets fitted)
