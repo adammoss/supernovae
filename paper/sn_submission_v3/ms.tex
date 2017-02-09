@@ -235,11 +235,15 @@ C & 1,045 & - & - & 0.33 & 70 & 75 & True \\
 C & 1,045 & - & - & 0.29 & 67 & 71 & False \\
 D & $\sim$8,000 & - & - & 0.55 & - & - & True \\
 D & $\sim$2,00$\underset{~}{0}$ & - & - & 0.45 & - & - & True \\
+E & 1,103 & $0.94 \pm 0.03$ & - & - & - & - & True \\
+E & 1,103 & $0.89 \pm 0.53$ & - & - & - & - & False \\
+E & 1,103 & - & - & - & 90 & 85 & True\\
+E & 1,103 & - & - & - & 87 & 90 & True\\
 \hline\hline
-E & 10,660 & $0.974 \pm 0.001$ & $90.4 \pm 0.3$ & - & $90.6 \pm 0.7$ & $86.5 \pm 0.7$ & True\\
-E & 10,660 & $0.959 \pm 0.006$ & $88.5 \pm 1.1$ & - & $87.6 \pm 1.1$ & $85.9 \pm 4.1$ & False\\
-F & 1,103 & $0.868 \pm 0.015$ & $78.1 \pm 0.9$ & - & $70.8 \pm 3.4$ & $70.6 \pm 4.1$ & True\\
-F & 1,103 & $0.865 \pm 0.011$ & $78.0 \pm 1.2$ & - & $66.9 \pm 3.2$ & $74.5 \pm 4.2$ & False\\\hline\hline
+F & 10,660 & $0.974 \pm 0.001$ & $90.4 \pm 0.3$ & - & $90.6 \pm 0.7$ & $86.5 \pm 0.7$ & True\\
+F & 10,660 & $0.959 \pm 0.006$ & $88.5 \pm 1.1$ & - & $87.6 \pm 1.1$ & $85.9 \pm 4.1$ & False\\
+G & 1,103 & $0.868 \pm 0.015$ & $78.1 \pm 0.9$ & - & $70.8 \pm 3.4$ & $70.6 \pm 4.1$ & True\\
+G & 1,103 & $0.865 \pm 0.011$ & $78.0 \pm 1.2$ & - & $66.9 \pm 3.2$ & $74.5 \pm 4.2$ & False\\\hline\hline
 A & 10,660 & $0.977 \pm 0.002$ & $93.1 \pm 0.4$ & $0.58 \pm 0.01$ & $88.0 \pm 1.1$ & $82.2 \pm 2.8$ & True\\
 A & 10,660 & $0.970 \pm 0.001$ & $92.0 \pm 0.3$ & $0.53 \pm 0.01$ & $86.0 \pm 0.9$ & $79.5 \pm 2.2$ & False\\
 B & 1,103 & $0.902 \pm 0.014$ & $85.2 \pm 1.2$ & $0.29 \pm 0.04$ & $71.5 \pm 1.6$ & $62.8 \pm 5.6$ & True\\
@@ -249,7 +253,7 @@ A & 10,660 & $0.948 \pm 0.002$ & $86.8 \pm 0.3$ & - & $84.1 \pm 1.1$ & $83.7 \pm
 B & 1,103 & $0.851 \pm 0.013$ & $76.8 \pm 1.3$ & - & $64.7 \pm 3.8$ & $71.0 \pm 4.1$ & True\\
 B & 1,103 & $0.819 \pm 0.010$ & $74.2 \pm 1.0$ & - & $58.1 \pm 3.8$ & $73.6 \pm 6.6$ & False\\\hline\hline
 \end{tabular}
-\caption{\label{tab:05_SN1a} (Top section) Summary of results for  type-Ia vs. non-type-Ia classification with a training fraction of 0.5, 0.25 and 0.052 with comparisons to similar methods in~\cite{Karpenka:2012pm} and~\cite{Newling:2010bp}. (Second section) Summary of results for types-I,~-II~and~-III classification. (Third section) Summary of results for SPCC early-epoch challenge. (Bottom section) Summary of the results for the SPCC early-epoch challenge when classifying between types-I~,~-II~and~-III supernovae. The models used are A) Unidirectional LSTM, [16, 16] with 0.5 dropout, B) Unidirectional LSTM, [4] with 0.5 dropout, C) \cite{Karpenka:2012pm}, D) \cite{Newling:2010bp}, E) Bidirectional LSTM, [16, 16] with 0.5 dropout, F) Bidirectional LSTM, [4] with 0.5 dropout. Errors on results are the mean and standard deviation values from 5 randomised runs.}
+\caption{\label{tab:05_SN1a} (Top section) Summary of results for  type-Ia vs. non-type-Ia classification with a training fraction of 0.5, 0.25 and 0.052 with comparisons to similar methods in~\cite{Karpenka:2012pm} and~\cite{Newling:2010bp}. (Second section) Summary of results for types-I,~-II~and~-III classification. (Third section) Summary of results for SPCC early-epoch challenge. (Bottom section) Summary of the results for the SPCC early-epoch challenge when classifying between types-I~,~-II~and~-III supernovae. The models used are A) Unidirectional LSTM, [16, 16] with 0.5 dropout, B) Unidirectional LSTM, [4] with 0.5 dropout, C) \cite{Karpenka:2012pm}, D) \cite{Newling:2010bp}, E) \cite{Lochner:2016hbn}~SALT2 fits averaged over machine learning architecture F) Bidirectional LSTM, [16, 16] with 0.5 dropout, G) Bidirectional LSTM, [4] with 0.5 dropout. Errors on results are the mean and standard deviation values from 5 randomised runs.}
 \end{table*}
 
 %\begin{table}[t!]
@@ -283,7 +287,7 @@ For a training fraction of  $5.2\%$ we find a single-layer LSTM network, with 4 
 
 It is difficult to directly compare the results from the SPCC challenge in~\cite{Kessler:2010qj} with this work since the figure of merit is quoted as a function of redshift and a non-representative set of light-curves was originally used. In~\cite{Kessler:2010qj} the method of~\cite{2008AJ....135..348S} had the highest average $F_1$, with 79\% purity and 96\% accuracy. This is a, somewhat, confusing average as $F_1\sim 0.4$ at a redshift $z\sim0.1$ up to $F_1\sim1$ at $z\sim0.9$. Other methods performed similarly. 
 
-It is better to consider comparison with other methods using post-SPCC data, for we obtain results which are competitive with previous approaches. The analyses by~\cite{Karpenka:2012pm} and~\cite{Newling:2010bp} are easier to compare. Along with~\cite{Lochner:2016hbn} these employ a two-step process, where features are first extracted by various methods before machine learning classification. The results obtained for similar sized training sets are comparable as can be seen in the top section of Table~\ref{tab:05_SN1a}. When using half the dataset to train on we get a higher $F_1$ value, $F_1=0.64$ compared to $F_1=0.58$ in~\cite{Karpenka:2012pm}. The value in~\cite{Newling:2010bp} is also similar given that the sample size is smaller. For a smaller sample training set of 5.2\% of all the data we again perform similarly to~\cite{Karpenka:2012pm} but under perform compare to~\cite{Newling:2010bp} taking into account the slightly larger sample size in the latter case.
+It is better to consider comparison with other methods using post-SPCC data, for we obtain results which are competitive with previous approaches. The analyses by~\cite{Karpenka:2012pm} and~\cite{Newling:2010bp} are easier to compare. Along with~\cite{Lochner:2016hbn} these employ a two-step process, where features are first extracted by various methods before machine learning classification. The results obtained for similar sized training sets are comparable as can be seen in the top section of Table~\ref{tab:05_SN1a}. When using half the dataset to train on we get a higher $F_1$ value, $F_1=0.64$ compared to $F_1=0.58$ in~\cite{Karpenka:2012pm}. The value in~\cite{Newling:2010bp} is also similar given that the sample size is smaller. For a smaller sample training set of 5.2\% of all the data we again perform similarly to~\cite{Karpenka:2012pm} but under perform compare to~\cite{Newling:2010bp} taking into account the slightly larger sample size in the latter case. In~\cite{Lochner:2016hbn} using the SALT2 fits provided the best average AUC over a range of machine learning techniques. By imposing a purity of 90\% a completeness of 85\% was achieved while requiring a completeness of 90\% reveals a corresponding purity of 85\%.
 
 In the second section of Table~\ref{tab:05_SN1a} the three class categorisation is shown. There is no available data for comparison of this problem, but compared to classification between type-Ia vs. non-type-Ia, bidirectional recurrent neural networks do well. The AUC and accuracy remain high, still above 90\% when the host-$z$ is included using a training fraction of 0.5. Using a smaller training fraction of 0.052, the results are worsened similar to the two class categorisation in the top section of Table~\ref{tab:05_SN1a}.
 
